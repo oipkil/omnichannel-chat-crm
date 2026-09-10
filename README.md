@@ -85,24 +85,46 @@ Truy cập ứng dụng tại: `http://localhost:5173`.
 
 ---
 
-## 💼 Cách đưa dự án này vào CV (CV Presentation Guide)
+## 🏛️ Luồng xử lý dữ liệu (Architecture & Data Flow)
 
-### Phiên bản Tiếng Việt:
-*   **Tên dự án**: Omnichannel Chat & CRM Dashboard (Hệ thống Quản lý Tin nhắn Đa kênh)
-*   **Vai trò**: Full-stack Developer (Cá nhân)
-*   **Công nghệ sử dụng**: React 19, Ant Design v5, Node.js, Express, Socket.io, MongoDB Atlas, Mongoose, Telegram Bot API, RESTful API.
-*   **Điểm nổi bật & Kết quả**:
-    - Thiết kế kiến trúc tổng hợp tin nhắn đa kênh từ Telegram, Zalo OA và Facebook Messenger về một giao diện duy nhất, ứng dụng mẫu thiết kế **Message Normalization Pattern**.
-    - Triển khai luồng truyền dữ liệu thời gian thực 2 chiều (Bi-directional Real-time) bằng **Socket.io**, đảm bảo độ trễ phản hồi < 100ms.
-    - Xây dựng giao diện CRM 3 cột chuẩn B2B SaaS với **Ant Design v5**: gắn thẻ phân loại khách hàng (Tags), ghi chú nội bộ, âm thanh thông báo và chế độ Dark/Light Mode.
-    - Tích hợp **MongoDB Atlas** lưu trữ vĩnh viễn lịch sử hội thoại và bảng phân tích số liệu tương tác (Analytics).
+```text
+[ Telegram / Zalo / Facebook ] 
+              │
+      (Webhook / Polling)
+              ▼
+   [ Node.js Backend Server ]
+              │
+    ┌─────────┴─────────┐
+    ▼                   ▼
+[ Message Normalizer ]  [ MongoDB Atlas ]
+(Gom về 1 JSON chuẩn)   (Lưu trữ vĩnh viễn)
+    │
+    ▼
+[ Socket.io Server ]
+    │ (Real-time Broadcast < 100ms)
+    ▼
+[ React + Ant Design Dashboard ]
+(Cập nhật UI 3 cột, phát âm thanh, tăng badge chưa đọc)
+```
 
-### Phiên bản Tiếng Anh (English for Multinational Firms):
-*   **Project Title**: Omnichannel Customer Chat & CRM Dashboard
-*   **Role**: Full-stack Developer
-*   **Tech Stack**: React 19, Ant Design v5, Node.js, Express, Socket.io, MongoDB Atlas, Mongoose, RESTful APIs.
-*   **Key Contributions**:
-    - Architected an omnichannel communication platform unifying inbound messages from Telegram, Zalo OA, and Facebook Messenger into a single dashboard using the Message Normalization Pattern.
-    - Implemented bidirectional real-time communication using Socket.io and Telegram Bot API with sub-100ms message delivery.
-    - Built an enterprise-grade 3-column CRM UI using Ant Design v5 featuring customer tagging, internal staff notes, notification chimes, dark/light theme toggle, and an analytics drawer.
-    - Designed scalable MongoDB schemas with Mongoose for persistent message history, indexing, and conversation state management.
+---
+
+## 📡 Danh sách API Endpoints
+
+| Phương thức | Đường dẫn (Route) | Chức năng |
+| :--- | :--- | :--- |
+| `GET` | `/api/chat/conversations` | Lấy danh sách toàn bộ cuộc hội thoại từ MongoDB |
+| `GET` | `/api/chat/conversations/:id/messages` | Lấy lịch sử tin nhắn của một hội thoại |
+| `POST` | `/api/chat/messages` | Gửi tin nhắn trả lời từ Dashboard tới khách |
+| `PUT` | `/api/chat/conversations/:id` | Cập nhật thẻ phân loại (Tags) và Ghi chú nội bộ |
+| `PUT` | `/api/chat/conversations/:id/read` | Đánh dấu hội thoại là đã đọc |
+| `POST` | `/api/webhook/telegram` | Tiếp nhận Webhook tin nhắn từ Telegram |
+| `POST` | `/api/webhook/facebook` | Tiếp nhận Webhook tin nhắn từ Messenger |
+| `POST` | `/api/webhook/zalo` | Tiếp nhận Webhook tin nhắn từ Zalo OA |
+| `POST` | `/api/webhook/mock` | Endpoint giả lập tin nhắn phục vụ kiểm thử |
+
+---
+
+## 📄 Bản quyền (License)
+
+Dự án được phát hành dưới giấy phép mã nguồn mở [MIT License](LICENSE).
