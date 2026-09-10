@@ -24,7 +24,7 @@ import AnalyticsDrawer from './components/AnalyticsDrawer';
 const { Header, Sider, Content } = Layout;
 const { Title, Text } = Typography;
 
-const SOCKET_SERVER_URL = 'http://localhost:5000';
+const SOCKET_SERVER_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function App() {
   const [conversations, setConversations] = useState([]);
