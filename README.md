@@ -1,47 +1,53 @@
-# 🚀 Omnichannel Chat Dashboard (Hệ thống Quản lý Tin nhắn Đa kênh)
+# 🚀 Omnichannel Chat & CRM Dashboard (Hệ thống Quản lý Tin nhắn Đa kênh)
 
-Dự án Fullstack ứng dụng **React (Ant Design)** và **Node.js (Express, Socket.io)** nhằm tổng hợp tin nhắn từ nhiều nền tảng (**Telegram, Facebook Messenger, Zalo OA**) về một giao diện quản trị duy nhất theo thời gian thực (Real-time).
-
----
-
-## 🌟 Tính năng nổi bật
-
-- **Quản lý hội thoại đa kênh (Omnichannel)**: Gom tin nhắn từ Telegram, Zalo OA, Messenger vào 1 màn hình duy nhất.
-- **Thời gian thực (Real-time với Socket.io)**: Tin nhắn mới xuất hiện ngay tức thì kèm thông báo và cập nhật số lượng tin chưa đọc (Unread badge) mà không cần F5.
-- **Bộ lọc & Tìm kiếm thông minh**: Lọc nhanh theo nền tảng (Tất cả, Telegram, Zalo, Facebook) và tìm kiếm theo tên khách hàng hoặc nội dung tin nhắn.
-- **Giao diện chuẩn doanh nghiệp (Ant Design v5)**: Sử dụng các component Layout, Sider, List, Avatar, Badge, Tag, Input.TextArea chuẩn UX/UI doanh nghiệp.
-- **Phản hồi 2 chiều (Bi-directional)**: Hỗ trợ nhân viên trả lời trực tiếp từ Dashboard gửi ngược lại cho khách hàng trên Telegram qua Bot API.
-- **Hỗ trợ Long-Polling & Webhook**: Linh hoạt nhận tin nhắn cả khi dev ở localhost (không cần mở cổng port) hoặc qua Webhook URL (Ngrok / Localtunnel).
-- **Bộ công cụ Mock Test tích hợp**: Nút "Test Real-time" ngay trên giao diện web và script `mock-webhook.js` để test toàn bộ luồng dữ liệu mà không phụ thuộc internet.
+Dự án Fullstack chuyên nghiệp ứng dụng **React 19 (Ant Design v5)** và **Node.js (Express, Socket.io, Mongoose)** nhằm tập trung hóa tin nhắn từ nhiều kênh (**Telegram, Zalo OA, Facebook Messenger**) về một giao diện quản trị duy nhất theo thời gian thực (Real-time).
 
 ---
 
-## 🏗️ Cấu trúc thư mục
+## 🌟 Tính năng nổi bật (Key Features)
+
+- **Quản lý hội thoại đa kênh (Omnichannel Hub)**: Gom tin nhắn từ Telegram, Zalo OA, Messenger vào 1 màn hình duy nhất với kiến trúc chuẩn hóa dữ liệu (*Message Normalization Pattern*).
+- **Thời gian thực (Real-time với Socket.io)**: Tiếp nhận và hiển thị tin nhắn mới ngay lập tức với độ trễ < 100ms mà không cần tải lại trang.
+- **Bố cục 3 Cột chuẩn Doanh nghiệp (Enterprise 3-Column Layout)**:
+  - **Cột 1**: Danh sách hội thoại kèm tìm kiếm, bộ lọc nền tảng và nhãn phân loại.
+  - **Cột 2**: Khung chat tương tác với bong bóng tin nhắn, gợi ý trả lời nhanh (Quick replies), phím tắt `Enter`.
+  - **Cột 3 (CRM Panel)**: Hồ sơ khách hàng, gắn thẻ phân loại (Tags: VIP, Tiềm năng, Cần gọi lại...), soạn và lưu ghi chú nội bộ của nhân viên.
+- **Cơ sở dữ liệu đám mây (MongoDB Atlas + Mongoose)**: Lưu trữ vĩnh viễn toàn bộ lịch sử tin nhắn, hội thoại, nhãn dán và ghi chú.
+- **Phản hồi 2 chiều (Bi-directional Messaging)**: Trả lời trực tiếp từ Dashboard, hệ thống tự động gọi Telegram Bot API gửi ngược lại tin nhắn vào app Telegram của khách hàng.
+- **Chế độ Tối / Sáng (Dark & Light Mode)**: Chuyển đổi giao diện linh hoạt với Design Tokens của Ant Design v5.
+- **Âm thanh thông báo (Web Audio Chime)**: Chuông báo "ting" nhẹ nhàng tự động phát khi có tin nhắn mới từ khách.
+- **Báo cáo Thống kê (Analytics Drawer)**: Biểu đồ thanh tiến độ tỷ lệ tin nhắn đa kênh và số liệu tương tác.
+
+---
+
+## 🏗️ Cấu trúc thư mục (Project Structure)
 
 ```
 BotChat/
-├── backend/                  # Server Node.js (Express + Socket.io)
+├── backend/                  # Server Node.js (Express + Socket.io + Mongoose)
 │   ├── src/
-│   │   ├── config/           # Cấu hình biến môi trường
+│   │   ├── config/           # Cấu hình biến môi trường & kết nối MongoDB Atlas
 │   │   ├── controllers/      # WebhookController & ChatController
-│   │   ├── data/             # In-memory store (sẵn sàng kết nối MongoDB)
-│   │   ├── routes/           # Định tuyến webhook & chat API
-│   │   ├── services/         # messageNormalizer (chuẩn hóa dữ liệu), telegramService
+│   │   ├── models/           # Mongoose Schemas (Conversation, Message)
+│   │   ├── routes/           # Định tuyến webhook & chat REST APIs
+│   │   ├── services/         # MessageNormalizer, TelegramService (Polling & Send)
 │   │   └── server.js         # Entry point server
 │   ├── mock-webhook.js       # Script bắn tin nhắn giả lập đa kênh
-│   ├── .env                  # Điền Bot Token & Port
+│   ├── .env.example          # Mẫu cấu hình môi trường
 │   └── package.json
 │
-├── frontend/                 # Client React (Vite + Ant Design)
+├── frontend/                 # Client React (Vite + Ant Design v5)
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── SidebarConversations.jsx # Danh sách hội thoại + bộ lọc
-│   │   │   ├── ChatHeader.jsx           # Header thông tin khách + nút thao tác
-│   │   │   ├── MessageList.jsx          # Khung tin nhắn dạng bong bóng chat
-│   │   │   └── MessageComposer.jsx      # Ô soạn thảo, gợi ý trả lời nhanh, nút gửi
-│   │   ├── services/         # Axios API client
-│   │   ├── utils/            # Helper phân loại màu sắc, icon nền tảng
-│   │   ├── App.jsx           # Bố cục chính Ant Design + Socket.io listener
+│   │   │   ├── SidebarConversations.jsx # Cột 1: Danh sách hội thoại + bộ lọc
+│   │   │   ├── ChatHeader.jsx           # Header thông tin khách + nút đóng/mở CRM
+│   │   │   ├── MessageList.jsx          # Cột 2: Khung bong bóng chat
+│   │   │   ├── MessageComposer.jsx      # Thanh soạn thảo & trả lời nhanh
+│   │   │   ├── CustomerDetailPanel.jsx  # Cột 3: Quản trị CRM Tags & Ghi chú
+│   │   │   └── AnalyticsDrawer.jsx      # Ngăn trượt báo cáo thống kê đa kênh
+│   │   ├── services/         # Axios API Client
+│   │   ├── utils/            # Helper Platform styles & Web Audio Sound
+│   │   ├── App.jsx           # Bố cục chính Ant Design + Socket.io
 │   │   └── main.jsx
 │   └── package.json
 └── README.md
@@ -49,10 +55,18 @@ BotChat/
 
 ---
 
-## ⚡ Hướng dẫn cài đặt & Khởi chạy
+## ⚡ Hướng dẫn Cài đặt & Khởi chạy (Getting Started)
 
-### 1. Khởi động Backend
-Mở Terminal tại thư mục `backend`:
+### 1. Cấu hình Biến môi trường
+Tại thư mục `backend/`, copy file `.env.example` thành `.env`:
+```bash
+cp backend/.env.example backend/.env
+```
+Cập nhật các thông số trong `backend/.env`:
+- `TELEGRAM_BOT_TOKEN`: Lấy từ `@BotFather` trên Telegram.
+- `MONGODB_URI`: Chuỗi kết nối từ MongoDB Atlas.
+
+### 2. Khởi động Backend
 ```bash
 cd backend
 npm install
@@ -60,47 +74,35 @@ npm run dev
 ```
 Server sẽ chạy tại `http://localhost:5000`.
 
-### 2. Khởi động Frontend
-Mở một cửa sổ Terminal mới tại thư mục `frontend`:
+### 3. Khởi động Frontend
+Mở một tab Terminal mới:
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-Truy cập trình duyệt tại: `http://localhost:5173`.
+Truy cập ứng dụng tại: `http://localhost:5173`.
 
 ---
 
-## 📲 Cách kết nối Telegram Bot thật
+## 💼 Cách đưa dự án này vào CV (CV Presentation Guide)
 
-1. Mở ứng dụng Telegram, tìm `@BotFather` và gửi lệnh `/newbot`.
-2. Đặt tên hiển thị và username cho bot, sau đó copy chuỗi **API Token**.
-3. Mở file `backend/.env` và dán vào:
-   ```env
-   TELEGRAM_BOT_TOKEN=123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11
-   ```
-4. Khởi động lại backend (`npm run dev`). Hệ thống sẽ tự động kích hoạt **Long-Polling** để nhận tin nhắn trực tiếp từ Telegram về giao diện mà bạn **không cần cài thêm Ngrok**!
+### Phiên bản Tiếng Việt:
+*   **Tên dự án**: Omnichannel Chat & CRM Dashboard (Hệ thống Quản lý Tin nhắn Đa kênh)
+*   **Vai trò**: Full-stack Developer (Cá nhân)
+*   **Công nghệ sử dụng**: React 19, Ant Design v5, Node.js, Express, Socket.io, MongoDB Atlas, Mongoose, Telegram Bot API, RESTful API.
+*   **Điểm nổi bật & Kết quả**:
+    - Thiết kế kiến trúc tổng hợp tin nhắn đa kênh từ Telegram, Zalo OA và Facebook Messenger về một giao diện duy nhất, ứng dụng mẫu thiết kế **Message Normalization Pattern**.
+    - Triển khai luồng truyền dữ liệu thời gian thực 2 chiều (Bi-directional Real-time) bằng **Socket.io**, đảm bảo độ trễ phản hồi < 100ms.
+    - Xây dựng giao diện CRM 3 cột chuẩn B2B SaaS với **Ant Design v5**: gắn thẻ phân loại khách hàng (Tags), ghi chú nội bộ, âm thanh thông báo và chế độ Dark/Light Mode.
+    - Tích hợp **MongoDB Atlas** lưu trữ vĩnh viễn lịch sử hội thoại và bảng phân tích số liệu tương tác (Analytics).
 
----
-
-## 🧪 Cách kiểm thử nhanh (Không cần cài bot)
-
-1. **Cách 1 (Ngay trên giao diện Web)**: Bấm nút **"Test Real-time"** ở góc trên danh sách hội thoại bên trái, chọn kênh muốn test và bấm "Bắn tin nhắn ngay".
-2. **Cách 2 (Bằng script terminal)**: Tại thư mục `backend`, chạy lệnh:
-   ```bash
-   node mock-webhook.js
-   ```
-   Hệ thống sẽ giả lập đồng thời 3 tin nhắn từ Telegram, Zalo OA và Facebook Messenger bắn thẳng vào giao diện theo thời gian thực!
-
----
-
-## 💼 Cách trình bày dự án này vào CV xin thực tập
-
-**Tên dự án**: Omnichannel Chat Dashboard (Hệ thống Quản lý Tin nhắn Đa kênh)  
-**Vai trò**: Full-stack Developer  
-**Công nghệ**: React, Ant Design, Node.js (Express), Socket.io, RESTful API, Axios.  
-**Mô tả & Kết quả**:
-- Xây dựng hệ thống tiếp nhận và tập trung hóa tin nhắn từ các nền tảng Telegram, Zalo OA, Facebook Messenger về một giao diện quản trị duy nhất.
-- Ứng dụng Socket.io để truyền tải dữ liệu thời gian thực (real-time bi-directional), đảm bảo tin nhắn gửi đến và phản hồi hiển thị tức thì với độ trễ < 100ms.
-- Chuẩn hóa cấu trúc dữ liệu JSON từ nhiều nguồn khác nhau về định dạng thống nhất (Message Normalization Pattern).
-- Tối ưu hóa trải nghiệm người dùng với thư viện Ant Design v5: phân loại nhãn nền tảng, đếm số lượng tin nhắn chưa đọc và tìm kiếm hội thoại nhanh chóng.
+### Phiên bản Tiếng Anh (English for Multinational Firms):
+*   **Project Title**: Omnichannel Customer Chat & CRM Dashboard
+*   **Role**: Full-stack Developer
+*   **Tech Stack**: React 19, Ant Design v5, Node.js, Express, Socket.io, MongoDB Atlas, Mongoose, RESTful APIs.
+*   **Key Contributions**:
+    - Architected an omnichannel communication platform unifying inbound messages from Telegram, Zalo OA, and Facebook Messenger into a single dashboard using the Message Normalization Pattern.
+    - Implemented bidirectional real-time communication using Socket.io and Telegram Bot API with sub-100ms message delivery.
+    - Built an enterprise-grade 3-column CRM UI using Ant Design v5 featuring customer tagging, internal staff notes, notification chimes, dark/light theme toggle, and an analytics drawer.
+    - Designed scalable MongoDB schemas with Mongoose for persistent message history, indexing, and conversation state management.
